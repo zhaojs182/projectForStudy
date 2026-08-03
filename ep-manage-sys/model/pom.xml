@@ -18,7 +18,6 @@
         <dependency>
             <groupId>org.springframework.data</groupId>
             <artifactId>spring-data-elasticsearch</artifactId>
-            <version>4.4.9</version>
         </dependency>
 
         <!-- Jackson for JSON serialization -->

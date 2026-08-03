@@ -21,6 +21,9 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+/**
+ * 设备实例管理接口，负责设备实例的查询、保存、更新、删除和状态流转。
+ */
 @RestController
 @RequestMapping("/deviceInstance")
 public class DeviceInstanceInfo {
@@ -37,6 +40,9 @@ public class DeviceInstanceInfo {
     @Autowired
     private RabbitTemplate rabbitTemplate;
 
+    /**
+     * 根据设备 ID 更新设备实例状态，供设备领用与归还等业务调用。
+     */
     @RequestMapping("/updateDeviceInstanceStatus")
     public void updateDeviceInstanceStatus(HttpServletRequest req, HttpServletResponse resp,
                                            @RequestParam(value = "deviceId") Integer id,
@@ -57,6 +63,9 @@ public class DeviceInstanceInfo {
 
 
 
+    /**
+     * 根据一组设备实例 ID 批量查询设备详情，供搜索服务回填业务数据。
+     */
     @RequestMapping("/getDeviceInstanceListById")
     public List<Deviceinstance> getDeviceInstanceListById(HttpServletRequest req, HttpServletResponse resp,
                                                           @RequestBody List<Integer> deviceInstanceIds) {
@@ -70,15 +79,14 @@ public class DeviceInstanceInfo {
 
 
 
+    /**
+     * 按设备型号 ID 分页查询对应的设备实例简要信息。
+     */
     @RequestMapping("/getBriefInfoList")
     public void getBriefInfoList(HttpServletRequest req, HttpServletResponse resp,
                                    @RequestParam(value = "pageNum", defaultValue = "1") int pageNum,
                                    @RequestParam(value = "pageSize", defaultValue = "3") int pageSize,
                                  @RequestParam(value = "id", required = false) Integer id) {
-        System.out.println("查了查了...................................");
-        System.out.println("pageNum="+pageNum);
-        System.out.println("pageSize="+pageSize);
-        System.out.println("id="+id);
         Page<Deviceinstance> page = new Page<>(pageNum, pageSize);
         QueryWrapper<Deviceinstance> queryWrapper = new QueryWrapper<>();
         queryWrapper.eq("model_id", id);
@@ -93,6 +101,9 @@ public class DeviceInstanceInfo {
         WebUtil.writeJson(resp, result);
     }
 
+    /**
+     * 根据设备实例 ID 查询单台设备的完整详情。
+     */
     @RequestMapping("/getTrueDetailInfoList/{id}")  // 使用 {id} 占位符
     public void getDetailInfoList(HttpServletRequest req, HttpServletResponse resp,
             @PathVariable Integer id  // 使用 @PathVariable 接收路径参数
@@ -107,8 +118,11 @@ public class DeviceInstanceInfo {
         WebUtil.writeJson(resp, result);
     }
 
-@RequestMapping("/deviceTrueDeleteService/{id}")
-public void deviceTrueDeleteService(HttpServletRequest req, HttpServletResponse resp, @PathVariable Integer id) {
+    /**
+     * 删除指定设备实例，并通过 RabbitMQ 通知下游服务同步删除相关数据。
+     */
+    @RequestMapping("/deviceTrueDeleteService/{id}")
+    public void deviceTrueDeleteService(HttpServletRequest req, HttpServletResponse resp, @PathVariable Integer id) {
     System.out.println("这是删除的参数" + id);
     boolean isDeleted = deviceinstanceService.removeById(id);
     Integer maintainRecordId= id;
@@ -126,8 +140,11 @@ public void deviceTrueDeleteService(HttpServletRequest req, HttpServletResponse 
         Result result = Result.error("设备删除失败");
         WebUtil.writeJson(resp, result);
     }
-}
+    }
 
+    /**
+     * 新增或更新设备实例，并通过 RabbitMQ 同步设备搜索索引。
+     */
     @RequestMapping("/updateDeviceInstance")
     public void updateDeviceInstance(HttpServletRequest req, HttpServletResponse resp, @RequestBody Deviceinstance deviceinstance) {
         System.out.println("deviceinstance=" + deviceinstance);

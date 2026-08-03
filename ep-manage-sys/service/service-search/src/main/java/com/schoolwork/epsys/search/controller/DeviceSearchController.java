@@ -20,6 +20,9 @@ import java.util.Map;
 
 import static com.schoolwork.epsys.common.ResultCodeEnum.LAZY_ERROR;
 
+/**
+ * 设备搜索接口，负责 Elasticsearch 设备文档的检索、写入、删除和详情查询。
+ */
 @RestController // 标注为Spring的REST控制器组件
 @RequestMapping("/search") // 定义该控制器的基础请求路径
 public class DeviceSearchController {
@@ -36,6 +39,9 @@ public class DeviceSearchController {
         // 构造方法注入设备搜索服务
     }
 
+    /**
+     * 按关键词检索设备文档，并通过设备服务补充对应的设备实例信息。
+     */
     @RequestMapping // 处理GET请求，执行搜索操作
     public void search(HttpServletRequest req,HttpServletResponse resp, @RequestParam("keyword") String keyword) {
         List<DeviceInstanceDoc> deviceInstanceDocs = deviceSearchService.search(keyword);
@@ -65,12 +71,18 @@ public class DeviceSearchController {
         WebUtil.writeJson(resp, result);
     }
 
+    /**
+     * 将设备实例文档写入 Elasticsearch 索引。
+     */
     @PostMapping // 处理POST请求，执行保存操作
     public void save(@RequestBody DeviceInstanceDoc doc) {
         deviceSearchService.save(doc);
         // 调用服务的save方法保存设备实例文档
     }
 
+    /**
+     * 根据文档 ID 删除 Elasticsearch 中的设备实例文档。
+     */
     @DeleteMapping("/{id}") // 处理DELETE请求，执行删除操作
     public void delete(@PathVariable Integer id) {
         System.out.println("删除设备实例文档：" + id);
@@ -78,6 +90,9 @@ public class DeviceSearchController {
         // 调用服务的deleteById方法删除设备实例文档
     }
 
+    /**
+     * 根据文档 ID 查询单个设备实例文档。
+     */
     @GetMapping("/{id}") // 处理GET请求，执行获取操作
     public DeviceInstanceDoc get(@PathVariable Integer id) {
         return deviceSearchService.getById(id);

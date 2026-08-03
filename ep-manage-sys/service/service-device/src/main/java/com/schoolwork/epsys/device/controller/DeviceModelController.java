@@ -20,6 +20,9 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+/**
+ * 设备型号管理接口，负责型号的分页查询、新增、修改和删除。
+ */
 @RestController
 @RequestMapping("/deviceModel")
 public class DeviceModelController {
@@ -33,6 +36,10 @@ public class DeviceModelController {
 //    userMapper.selectPage(page, null);
 //    //获取分页数据
 //    List<User> list = page.getRecords();
+
+    /**
+     * 分页查询设备型号，可按设备分类 ID 进行筛选。
+     */
     @RequestMapping("/getInfoList")
     public void getInfoList(HttpServletRequest req, HttpServletResponse resp,
                             @RequestParam(value = "pageNum", defaultValue = "1") int pageNum,
@@ -67,6 +74,9 @@ public class DeviceModelController {
         WebUtil.writeJson(resp, result);
     }
 
+    /**
+     * 保存设备型号；请求体包含 ID 时执行更新，否则执行新增。
+     */
     @RequestMapping("/addDeviceModel")
     public  void addDeviceModel(HttpServletRequest req, HttpServletResponse resp,
                             @RequestBody Devicemodel devicemodel) {
@@ -97,6 +107,10 @@ public class DeviceModelController {
             return;
         }
     }
+
+    /**
+     * 根据型号 ID 删除设备型号。
+     */
     @RequestMapping("/deleteDeviceModel")
     public void deleteDeviceModel(HttpServletRequest req, HttpServletResponse resp,
                             @RequestParam(value = "id") Integer id) {

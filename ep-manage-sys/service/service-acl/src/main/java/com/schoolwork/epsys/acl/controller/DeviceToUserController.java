@@ -22,6 +22,9 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+/**
+ * 设备领用关系接口，负责用户与设备的绑定、解绑和关系查询。
+ */
 @RestController
 @RequestMapping("/deviceToUser")
 public class DeviceToUserController {
@@ -33,6 +36,9 @@ public class DeviceToUserController {
     @Autowired
     DeviceFeignClient deviceFeignClient;
 
+    /**
+     * 为用户分配设备，并在绑定成功后将设备状态更新为“使用”。
+     */
     @RequestMapping("/addDeviceToUser")
     public void addDeviceToUser(HttpServletRequest req,HttpServletResponse resp,
                                    @RequestParam Integer userId,@RequestParam Integer deviceId) {
@@ -49,6 +55,10 @@ public class DeviceToUserController {
         WebUtil.writeJson(resp, result);
 
     }
+
+    /**
+     * 解除用户与设备的绑定，并在解绑成功后将设备状态恢复为“闲置”。
+     */
     @RequestMapping("/removeDeviceFromUser")
     public void removeDeviceFromUser(HttpServletRequest req,HttpServletResponse resp,
                                         @RequestParam Integer userId,@RequestParam  Integer deviceId) {
@@ -66,6 +76,10 @@ public class DeviceToUserController {
         WebUtil.writeJson(resp, result);
 
     }
+
+    /**
+     * 按用户 ID 分页查询其设备领用关系。
+     */
     @RequestMapping("/getDevicesByUserId")
     public void getDevicesByUserId(HttpServletRequest req,HttpServletResponse resp,@RequestParam(value = "pageNum", defaultValue = "1") int pageNum,
                                    @RequestParam(value = "pageSize", defaultValue = "3") int pageSize,

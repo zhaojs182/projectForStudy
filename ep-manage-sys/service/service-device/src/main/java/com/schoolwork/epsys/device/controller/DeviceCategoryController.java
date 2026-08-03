@@ -19,6 +19,9 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+/**
+ * 设备分类管理接口，负责分类列表查询以及分类的新增、删除和修改。
+ */
 @RestController
 @RequestMapping("/device")
 public class DeviceCategoryController {
@@ -30,6 +33,9 @@ public class DeviceCategoryController {
     @Autowired
     AclFeignClient aclFeignClient;
 
+    /**
+     * 校验登录令牌后查询全部设备分类。
+     */
     @RequestMapping("/category/list")
     public void getListInfo(@RequestHeader(value = "Authorization", required = false) String authorization,
                             HttpServletRequest req, HttpServletResponse resp){
@@ -54,6 +60,9 @@ public class DeviceCategoryController {
 
     }
 
+    /**
+     * 新增设备分类，并记录分类的创建时间。
+     */
     @RequestMapping("/category/add")
     public void addInfo(@RequestHeader(value = "Authorization", required = false) String authorization,
                        @RequestBody Devicecategory devicecategory,
@@ -74,6 +83,10 @@ public class DeviceCategoryController {
         Result result = Result.build(null, ResultCodeEnum.LAZY_ERROR);
         WebUtil.writeJson(resp, result);
     }
+
+    /**
+     * 根据分类 ID 删除设备分类。
+     */
     @RequestMapping("/category/delete")
     public void deleteInfo(
             @RequestHeader(value = "Authorization", required = false) String authorization,
@@ -96,6 +109,10 @@ public class DeviceCategoryController {
             WebUtil.writeJson(resp, result);
         }
     }
+
+    /**
+     * 校验登录令牌和分类是否存在后，更新设备分类信息。
+     */
     @RequestMapping("/category/update")
     public void updateInfo(
             @RequestHeader(value = "Authorization", required = false) String authorization,
@@ -143,4 +160,3 @@ public class DeviceCategoryController {
 
 
 }
-

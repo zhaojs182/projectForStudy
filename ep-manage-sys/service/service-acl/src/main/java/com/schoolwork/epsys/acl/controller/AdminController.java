@@ -11,7 +11,9 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 
-//这里写用户管理的接口
+/**
+ * 管理端用户辅助接口，提供权限校验和用户信息查询能力。
+ */
 @RestController
 @RequestMapping("/admin")
 public class AdminController {
@@ -21,11 +23,19 @@ public class AdminController {
 
     @Autowired
     UserService userService;
+
+    /**
+     * 校验指定用户是否拥有指定权限，供其他服务进行远程鉴权。
+     */
     @RequestMapping("/roleRequest")
     public Boolean roleRequest(@RequestParam Integer userId,          // 从 ?userId=xxx 获取
                             @RequestParam Integer permissionId) {
         return permissionsMapper.hasPermission(userId, permissionId);
     }
+
+    /**
+     * 根据用户 ID 查询用户名，供通知等跨服务场景使用。
+     */
     @RequestMapping("/getUsernameById")
     public String getUsernameById(@RequestParam Integer userId) {
         User user =userService.getById(userId);

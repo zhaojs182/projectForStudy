@@ -12,6 +12,10 @@ import org.springframework.transaction.annotation.Transactional;
 
 
 public interface MaintainRecordService extends IService<MaintainRecord> {
+
+    /**
+     * 在同一事务中写入唯一领取记录并更新工单，requestId 用于识别幂等重试。
+     */
     @Transactional
-    boolean updateRecordWithLock(MaintainRecord record);
+    ClaimOrderResult claimOrder(Integer orderId, Integer repairmanId, String requestId);
 }

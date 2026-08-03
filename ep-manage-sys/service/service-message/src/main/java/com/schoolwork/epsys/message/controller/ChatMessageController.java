@@ -26,6 +26,9 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+/**
+ * 即时聊天接口，负责在线用户查询、历史消息查询以及 WebSocket 消息收发与落库。
+ */
 @RestController
 @MessageMapping("/chat")
 public class ChatMessageController {
@@ -44,7 +47,9 @@ public class ChatMessageController {
         this.messagingTemplate = messagingTemplate;
     }
 
-   // 前端发送路径：/app/chat
+    /**
+     * 补全消息的发送者和时间等信息，并将消息定向推送给接收用户。
+     */
     @SendToUser("/queue/messages") // 仅推送给当前用户（可选）
     public void sendToUser(ChatMessage message, Principal principal) {
         // 获取发送者 ID（假设 token 或连接时设置了 principal）
@@ -63,6 +68,9 @@ public class ChatMessageController {
         );
     }
 
+    /**
+     * 从 Redis 查询当前处于在线状态的用户列表。
+     */
     @RequestMapping("/getOnlineUser")
     public void getOnlineUser(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         String onlineUsersKey = "online:users";  // Hash的key名称
@@ -72,6 +80,9 @@ public class ChatMessageController {
 
     }
 
+    /**
+     * 查询发送方与接收方之间的全部历史聊天消息。
+     */
     @RequestMapping("/getAllABMessage")
     public void getAllABMessage(HttpServletRequest req, HttpServletResponse resp,
                                 @RequestParam("senderId") int senderId, @RequestParam("receiverId") int receiverId) throws ServletException, IOException {
@@ -83,6 +94,10 @@ public class ChatMessageController {
         WebUtil.writeJson(resp, result);
 
     }
+
+    /**
+     * 接收 WebSocket 聊天数据，将消息保存到数据库并推送给目标用户。
+     */
     @MessageMapping("/chatBackData")
     public void chatBackData(@Payload Map<String, Object> data, Principal principal) {
         System.out.println("收到的数据 = " + data);
@@ -111,6 +126,5 @@ public class ChatMessageController {
 
 
 }
-
 
 

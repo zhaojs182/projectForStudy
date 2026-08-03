@@ -1,5 +1,1 @@
-com\schoolwork\epsys\model\Usertorole.class
-com\schoolwork\epsys\model\User.class
-com\schoolwork\epsys\model\Roles.class
-com\schoolwork\epsys\model\Permissions.class
-com\schoolwork\epsys\model\Roletopermission.class
+com/schoolwork/epsys/model/device/MaintainOrderClaim.class

@@ -29,8 +29,9 @@ import java.util.concurrent.TimeUnit;
 import com.schoolwork.epsys.utils.JwtUtils;
 import com.schoolwork.epsys.utils.WebUtil;
 
-
-//这里也是之后补全
+/**
+ * 用户账户接口，负责登录注册、身份信息查询、角色查询和维修员申请等业务。
+ */
 @Transactional
 @RestController
 @RequestMapping("/user")
@@ -51,6 +52,9 @@ public class UserController {
 
 
 
+    /**
+     * 校验用户名和密码，登录成功后签发 JWT，并在 Redis 中记录在线用户。
+     */
     @RequestMapping("/login")
     public void login(HttpServletRequest req, HttpServletResponse resp, @Pattern(regexp = "^\\S{3,16}$") String username,
                       @Pattern(regexp = "^\\S{5,16}$") String password) throws ServletException, IOException {
@@ -87,6 +91,9 @@ public class UserController {
         }
     }
 
+    /**
+     * 注册普通用户，并在注册成功后为其分配默认角色。
+     */
     @RequestMapping("/register")
     public void register(HttpServletRequest req, HttpServletResponse resp, @Pattern(regexp = "^\\S{3,16}$") String username,
                          @Pattern(regexp = "^\\S{5,16}$") String password, String phonenum) throws ServletException, IOException{
@@ -117,6 +124,9 @@ public class UserController {
         }
     }
 
+    /**
+     * 解析请求中的 JWT，查询并返回当前登录用户的资料。
+     */
     @RequestMapping("/getUserInfo")
     public void getUserInfo(@RequestHeader(value = "Authorization", required = false) String authorization,
                             HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
@@ -134,7 +144,9 @@ public class UserController {
         WebUtil.writeJson(resp,result);
     }
 
-    //getUserRole
+    /**
+     * 根据 JWT 中的用户 ID 查询当前用户拥有的全部角色 ID。
+     */
     @RequestMapping("/getUserRole")
     public void getUserRole(@RequestHeader(value = "Authorization", required = false) String authorization,
                             HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
@@ -156,6 +168,9 @@ public class UserController {
 
 
 
+    /**
+     * 提交维修员申请，将申请消息发送到 RabbitMQ 交由审批服务异步处理。
+     */
     @PostMapping("/apply")
     public void apply(HttpServletRequest req, HttpServletResponse resp,
                       @RequestHeader(value = "Authorization", required = false) String authorization,
@@ -171,6 +186,9 @@ public class UserController {
         WebUtil.writeJson(resp, result);
     }
 
+    /**
+     * 根据 JWT 确定当前用户，并更新其个人资料。
+     */
     @RequestMapping("/updateUserInfo")
     public void updateUserInfo(@RequestHeader(value = "Authorization", required = false) String authorization,@RequestBody User user,
                                HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
