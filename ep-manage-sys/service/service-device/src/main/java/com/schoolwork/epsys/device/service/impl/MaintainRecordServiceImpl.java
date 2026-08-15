@@ -5,6 +5,10 @@ import com.schoolwork.epsys.device.mapper.MaintainOrderClaimMapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.schoolwork.epsys.model.device.MaintainRecord;
 import com.schoolwork.epsys.device.mapper.MaintainRecordMapper;
+import com.schoolwork.epsys.device.order.MaintainOrderEvent;
+import com.schoolwork.epsys.device.order.OrderLifecycleService;
+import com.schoolwork.epsys.device.order.OrderStateMachine;
+import com.schoolwork.epsys.device.order.OrderTransitionContext;
 import com.schoolwork.epsys.model.device.MaintainOrderClaim;
 import com.schoolwork.epsys.device.service.ClaimOrderConflictException;
 import com.schoolwork.epsys.device.service.ClaimOrderResult;
@@ -30,6 +34,12 @@ public class MaintainRecordServiceImpl extends ServiceImpl<MaintainRecordMapper,
 
     @Autowired
     private MaintainOrderClaimMapper maintainOrderClaimMapper;
+
+    @Autowired
+    private OrderLifecycleService lifecycleService;
+
+    @Autowired
+    private OrderStateMachine stateMachine;
 
     @Override
     @Transactional
@@ -57,7 +67,7 @@ public class MaintainRecordServiceImpl extends ServiceImpl<MaintainRecordMapper,
         if (record == null) {
             return ClaimOrderResult.ORDER_NOT_FOUND;
         }
-        if (!isClaimableStatus(record.getStatus())) {
+        if (!stateMachine.canTransition(record.getStatus(), MaintainOrderEvent.MANUAL_CLAIM)) {
             return ClaimOrderResult.ORDER_NOT_CLAIMABLE;
         }
         if (record.getMiantainId() != null) {
@@ -71,18 +81,14 @@ public class MaintainRecordServiceImpl extends ServiceImpl<MaintainRecordMapper,
         claim.setClaimedAt(new Date());
         maintainOrderClaimMapper.insert(claim);
 
-        record.setStatus(STATUS_IN_PROGRESS);
-        record.setMiantainId(repairmanId);
+        lifecycleService.apply(record, MaintainOrderEvent.MANUAL_CLAIM,
+                OrderTransitionContext.assignment(repairmanId, new Date()));
         if (!this.updateById(record)) {
             throw new ClaimOrderConflictException("工单版本已发生变化");
         }
         return ClaimOrderResult.SUCCESS;
     }
 
-    private boolean isClaimableStatus(Object status) {
-        return STATUS_APPROVED.equals(status) || STATUS_WAITING_FOR_CLAIM.equals(status);
-    }
 }
-
 
 

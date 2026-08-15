@@ -24,6 +24,7 @@ public class MQConfig {
     public RabbitTemplate rabbitTemplate(ConnectionFactory connectionFactory, MessageConverter messageConverter) {
         RabbitTemplate template = new RabbitTemplate(connectionFactory);
         template.setMessageConverter(messageConverter);
+        template.setMandatory(true);
         return template;
     }
 
@@ -92,6 +93,33 @@ public class MQConfig {
     @Bean
     public Binding decreaseDeviceInstanceBinding() {
         return BindingBuilder.bind(decreaseDeviceInstanceQueue()).to(DeviceInstanceExchange()).with(DECREASE_DEVICE_INSTANCE_ROUTING_KEY);
+    }
+
+    @Bean
+    public DirectExchange deviceBindingExchange() {
+        return ExchangeBuilder.directExchange(DEVICE_BINDING_EXCHANGE).durable(true).build();
+    }
+
+    @Bean
+    public Queue deviceBindingRequestQueue() {
+        return QueueBuilder.durable(DEVICE_BINDING_REQUEST_QUEUE).build();
+    }
+
+    @Bean
+    public Queue deviceBindingResultQueue() {
+        return QueueBuilder.durable(DEVICE_BINDING_RESULT_QUEUE).build();
+    }
+
+    @Bean
+    public Binding deviceBindingRequestBinding() {
+        return BindingBuilder.bind(deviceBindingRequestQueue())
+                .to(deviceBindingExchange()).with(DEVICE_BINDING_REQUEST_ROUTING_KEY);
+    }
+
+    @Bean
+    public Binding deviceBindingResultBinding() {
+        return BindingBuilder.bind(deviceBindingResultQueue())
+                .to(deviceBindingExchange()).with(DEVICE_BINDING_RESULT_ROUTING_KEY);
     }
 
 

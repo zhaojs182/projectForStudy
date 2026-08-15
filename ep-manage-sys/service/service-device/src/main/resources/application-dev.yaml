@@ -79,3 +79,10 @@ knowledge:
     publish-delay-ms: ${WORK_ORDER_KNOWLEDGE_PUBLISH_DELAY_MS:2000}
     publish-batch-size: 50
     confirm-timeout-ms: 5000
+
+device-binding:
+  saga:
+    enabled: ${DEVICE_BINDING_SAGA_ENABLED:true}
+    publish-delay-ms: ${DEVICE_BINDING_PUBLISH_DELAY_MS:2000}
+    publish-batch-size: 50
+    confirm-timeout-ms: 5000

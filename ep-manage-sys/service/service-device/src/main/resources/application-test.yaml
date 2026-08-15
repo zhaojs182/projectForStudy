@@ -13,6 +13,10 @@ mybatis-plus:
     map-underscore-to-camel-case: true
     log-impl: org.apache.ibatis.logging.nologging.NoLoggingImpl
 spring:
+  task:
+    scheduling:
+      shutdown:
+        await-termination-period: 5s
   datasource:
     type: com.zaxxer.hikari.HikariDataSource
     driver-class-name: com.mysql.cj.jdbc.Driver
@@ -68,4 +72,8 @@ dispatch:
 
 knowledge:
   work-order-ingestion:
+    enabled: false
+
+device-binding:
+  saga:
     enabled: false

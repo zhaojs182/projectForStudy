@@ -44,6 +44,24 @@ spring:
           max-idle: 5
           min-idle: 0
 
+  redis:
+    redisson:
+      config: |
+        singleServerConfig:
+          address: "redis://localhost:6379"
+          database: 0
+          password: null
+          connectionMinimumIdleSize: 1
+          connectionPoolSize: 4
+          timeout: 3000
+        threads: 1
+        nettyThreads: 1
+        transportMode: "NIO"
+
   jackson:
     date-format: yyyy-MM-dd HH:mm:ss
     time-zone: GMT+8
+
+device-binding:
+  saga:
+    enabled: false

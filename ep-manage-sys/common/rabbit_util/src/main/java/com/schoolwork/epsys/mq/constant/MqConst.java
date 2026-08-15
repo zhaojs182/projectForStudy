@@ -22,4 +22,10 @@ public class MqConst {
     public static final String INCREASE_DEVICE_INSTANCE_QUEUE = "increase_device_instance_queue";
     public static final String DECREASE_DEVICE_INSTANCE_QUEUE = "decrease_device_instance_queue";
 
+    public static final String DEVICE_BINDING_EXCHANGE = "flowfix.device-binding";
+    public static final String DEVICE_BINDING_REQUEST_ROUTING_KEY = "flowfix.device-binding.requested.v1";
+    public static final String DEVICE_BINDING_RESULT_ROUTING_KEY = "flowfix.device-binding.result.v1";
+    public static final String DEVICE_BINDING_REQUEST_QUEUE = "flowfix.device.binding.requests";
+    public static final String DEVICE_BINDING_RESULT_QUEUE = "flowfix.acl.device.binding.results";
+
 }

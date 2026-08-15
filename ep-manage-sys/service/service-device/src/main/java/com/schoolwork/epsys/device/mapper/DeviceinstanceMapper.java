@@ -3,6 +3,8 @@ package com.schoolwork.epsys.device.mapper;
 
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.schoolwork.epsys.model.device.Deviceinstance;
+import org.apache.ibatis.annotations.Param;
+import org.apache.ibatis.annotations.Update;
 
 /**
 * @author 27959
@@ -12,8 +14,16 @@ import com.schoolwork.epsys.model.device.Deviceinstance;
 */
 public interface DeviceinstanceMapper extends BaseMapper<Deviceinstance> {
 
-}
+    @Update("""
+            UPDATE deviceinstance
+            SET status = #{targetStatus}
+            WHERE id = #{deviceId} AND status = #{expectedStatus}
+            """)
+    int transitionStatus(@Param("deviceId") Integer deviceId,
+                         @Param("expectedStatus") String expectedStatus,
+                         @Param("targetStatus") String targetStatus);
 
+}
 
 
 
