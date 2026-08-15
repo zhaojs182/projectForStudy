@@ -1,1 +1,5 @@
+com/schoolwork/epsys/model/device/WorkOrderKnowledgeOutbox.class
 com/schoolwork/epsys/model/device/MaintainOrderClaim.class
+com/schoolwork/epsys/model/device/DispatchEventOutbox.class
+com/schoolwork/epsys/model/device/DispatchAssignment.class
+com/schoolwork/epsys/model/device/RepairmanDispatchProfile.class

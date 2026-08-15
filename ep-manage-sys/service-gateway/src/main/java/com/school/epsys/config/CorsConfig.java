@@ -15,6 +15,7 @@ public class CorsConfig {
         CorsConfiguration config = new CorsConfiguration();
         config.addAllowedMethod("*");
         config.addAllowedOrigin("http://localhost:5173");
+        config.addAllowedOrigin("http://127.0.0.1:5173");
         config.addAllowedHeader("*");
         // 4. 新增：允许携带凭据（Cookie、Authorization 头等）
         config.setAllowCredentials(true);

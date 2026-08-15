@@ -17,7 +17,11 @@ public class MaintainRecord implements Serializable {
 
     private Integer deviceId;
 
+    private String tenantId;
+
     private Object maintenanceType;
+
+    private String priority;
 
     private Date startTime;
 
@@ -27,11 +31,26 @@ public class MaintainRecord implements Serializable {
 
     private String description;
 
+    private String repairProcess;
+
+    private String solution;
+
+    private String rootCause;
+
+    private String verificationResult;
+
+    private String replacedParts;
+
+    private String knowledgeTags;
+
     private Object status;
 
     private Integer approvalId;
 
     private Date approvalTime;
+
+    /** 审批通过后的自主抢单截止时间；到期仍无人领取时触发自动派单。 */
+    private Date claimDeadline;
 
     private Integer miantainId;
 

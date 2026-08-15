@@ -5,6 +5,7 @@ import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.schoolwork.epsys.common.Result;
 import com.schoolwork.epsys.device.service.DeviceinstanceService;
+import com.schoolwork.epsys.device.service.DevicemodelService;
 import com.schoolwork.epsys.device.service.MaintainRecordService;
 import com.schoolwork.epsys.message.client.MessageFeignClient;
 import com.schoolwork.epsys.model.device.Deviceinstance;
@@ -21,6 +22,10 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import static com.schoolwork.epsys.mq.constant.MqConst.DECREASE_DEVICE_INSTANCE_ROUTING_KEY;
+import static com.schoolwork.epsys.mq.constant.MqConst.DEVICE_INSTANCE_EXCHANGE;
+import static com.schoolwork.epsys.mq.constant.MqConst.INCREASE_DEVICE_INSTANCE_ROUTING_KEY;
+
 /**
  * 设备实例管理接口，负责设备实例的查询、保存、更新、删除和状态流转。
  */
@@ -30,6 +35,9 @@ public class DeviceInstanceInfo {
 
     @Autowired
     private DeviceinstanceService deviceinstanceService;
+
+    @Autowired
+    private DevicemodelService devicemodelService;
 
     @Autowired
     private MaintainRecordService maintainRecordService;
@@ -89,7 +97,9 @@ public class DeviceInstanceInfo {
                                  @RequestParam(value = "id", required = false) Integer id) {
         Page<Deviceinstance> page = new Page<>(pageNum, pageSize);
         QueryWrapper<Deviceinstance> queryWrapper = new QueryWrapper<>();
-        queryWrapper.eq("model_id", id);
+        if (id != null) {
+            queryWrapper.eq("model_id", id);
+        }
         // 查询数据库并应用分页和条件
         List<Deviceinstance> list = deviceinstanceService.page(page, queryWrapper).getRecords();
         // 封装分页数据
@@ -129,8 +139,8 @@ public class DeviceInstanceInfo {
     if (isDeleted) {
         // 发送设备删除消息到 RabbitMQ
         rabbitTemplate.convertAndSend(
-                "device_instance_exchange", // 交换机名称
-                "deviceInstance.decrease", // routing key
+                DEVICE_INSTANCE_EXCHANGE,
+                DECREASE_DEVICE_INSTANCE_ROUTING_KEY,
                 maintainRecordId                          // 删除时只发 id 即可
         );
 
@@ -147,22 +157,45 @@ public class DeviceInstanceInfo {
      */
     @RequestMapping("/updateDeviceInstance")
     public void updateDeviceInstance(HttpServletRequest req, HttpServletResponse resp, @RequestBody Deviceinstance deviceinstance) {
-        System.out.println("deviceinstance=" + deviceinstance);
-        deviceinstance.setCreateAt(new Date());
+        if (deviceinstance == null) {
+            WebUtil.writeJson(resp, Result.error("设备信息不能为空"));
+            return;
+        }
 
         Integer id = deviceinstance.getId();
+        Deviceinstance existing = null;
+        if (id != null) {
+            existing = deviceinstanceService.getById(id);
+            if (existing == null) {
+                WebUtil.writeJson(resp, Result.error("设备实例不存在"));
+                return;
+            }
+            mergeMissingFields(deviceinstance, existing);
+        }
+
+        if (deviceinstance.getModelId() == null) {
+            WebUtil.writeJson(resp, Result.error("请选择设备型号"));
+            return;
+        }
+        if (devicemodelService.getById(deviceinstance.getModelId()) == null) {
+            WebUtil.writeJson(resp, Result.error("所选设备型号不存在"));
+            return;
+        }
+        if (deviceinstance.getSerialNumber() == null || deviceinstance.getSerialNumber().trim().isEmpty()) {
+            WebUtil.writeJson(resp, Result.error("设备序列号不能为空"));
+            return;
+        }
+
         if (id == null) {
-            // 1. 保存设备
+            deviceinstance.setCreateAt(new Date());
             deviceinstance.setStatus("闲置");
             boolean isCreated = deviceinstanceService.save(deviceinstance);
             if (isCreated) {
-
                 rabbitTemplate.convertAndSend(
-                        "device_instance_exchange",
-                        "deviceInstance.increase",
-                        deviceinstance
+                        DEVICE_INSTANCE_EXCHANGE,
+                        INCREASE_DEVICE_INSTANCE_ROUTING_KEY,
+                        toSearchDocument(deviceinstance)
                 );
-                System.out.println("设备信息添加成功");
                 Result result = Result.ok("设备信息添加成功");
                 WebUtil.writeJson(resp, result);
                 return;
@@ -174,18 +207,11 @@ public class DeviceInstanceInfo {
         }
         // 更新逻辑
         boolean isUpdated = deviceinstanceService.updateById(deviceinstance);
-        DeviceInstanceDoc deviceInstanceDoc = new DeviceInstanceDoc();
-        deviceInstanceDoc.setId(deviceinstance.getId());
-        deviceInstanceDoc.setModelId(deviceinstance.getModelId());
-        deviceInstanceDoc.setSerialNumber(deviceinstance.getSerialNumber());
-        deviceInstanceDoc.setStatus(deviceinstance.getStatus().toString());
-        deviceInstanceDoc.setCreateAt(deviceinstance.getCreateAt());
-        deviceInstanceDoc.setLocation(deviceinstance.getLocation());
         if (isUpdated) {
             rabbitTemplate.convertAndSend(
-                    "device.instance.exchange",
-                    "device.instance.increase",
-                    deviceInstanceDoc
+                    DEVICE_INSTANCE_EXCHANGE,
+                    INCREASE_DEVICE_INSTANCE_ROUTING_KEY,
+                    toSearchDocument(deviceinstance)
             );
 
             Result result = Result.ok("设备信息更新成功");
@@ -196,6 +222,34 @@ public class DeviceInstanceInfo {
         }
     }
 
+    private void mergeMissingFields(Deviceinstance target, Deviceinstance source) {
+        if (target.getModelId() == null) {
+            target.setModelId(source.getModelId());
+        }
+        if (target.getSerialNumber() == null) {
+            target.setSerialNumber(source.getSerialNumber());
+        }
+        if (target.getStatus() == null) {
+            target.setStatus(source.getStatus());
+        }
+        if (target.getCreateAt() == null) {
+            target.setCreateAt(source.getCreateAt());
+        }
+        if (target.getLocation() == null) {
+            target.setLocation(source.getLocation());
+        }
+    }
+
+    private DeviceInstanceDoc toSearchDocument(Deviceinstance deviceinstance) {
+        DeviceInstanceDoc document = new DeviceInstanceDoc();
+        document.setId(deviceinstance.getId());
+        document.setModelId(deviceinstance.getModelId());
+        document.setSerialNumber(deviceinstance.getSerialNumber());
+        document.setStatus(deviceinstance.getStatus() == null ? null : deviceinstance.getStatus().toString());
+        document.setCreateAt(deviceinstance.getCreateAt());
+        document.setLocation(deviceinstance.getLocation());
+        return document;
+    }
 
 
 

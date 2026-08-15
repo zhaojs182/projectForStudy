@@ -1,6 +1,8 @@
 /Users/sevetar1626/workspace/upupup/myProject/ep-manage-sys/model/src/main/java/com/schoolwork/epsys/model/device/Devicecategory.java
+/Users/sevetar1626/workspace/upupup/myProject/ep-manage-sys/model/src/main/java/com/schoolwork/epsys/model/device/DispatchAssignment.java
 /Users/sevetar1626/workspace/upupup/myProject/ep-manage-sys/model/src/main/java/com/schoolwork/epsys/model/acl/Permissions.java
 /Users/sevetar1626/workspace/upupup/myProject/ep-manage-sys/model/src/main/java/com/schoolwork/epsys/model/message/ChatMessage.java
+/Users/sevetar1626/workspace/upupup/myProject/ep-manage-sys/model/src/main/java/com/schoolwork/epsys/model/device/RepairmanDispatchProfile.java
 /Users/sevetar1626/workspace/upupup/myProject/ep-manage-sys/model/src/main/java/com/schoolwork/epsys/model/device/Deviceinstance.java
 /Users/sevetar1626/workspace/upupup/myProject/ep-manage-sys/model/src/main/java/com/schoolwork/epsys/model/acl/Usertorole.java
 /Users/sevetar1626/workspace/upupup/myProject/ep-manage-sys/model/src/main/java/com/schoolwork/epsys/model/acl/Roletopermission.java
@@ -9,8 +11,10 @@
 /Users/sevetar1626/workspace/upupup/myProject/ep-manage-sys/model/src/main/java/com/schoolwork/epsys/model/approval/RepairmanApplication.java
 /Users/sevetar1626/workspace/upupup/myProject/ep-manage-sys/model/src/main/java/com/schoolwork/epsys/model/acl/Devicetousers.java
 /Users/sevetar1626/workspace/upupup/myProject/ep-manage-sys/model/src/main/java/com/schoolwork/epsys/model/search/DeviceInstanceDoc.java
+/Users/sevetar1626/workspace/upupup/myProject/ep-manage-sys/model/src/main/java/com/schoolwork/epsys/model/device/DispatchEventOutbox.java
 /Users/sevetar1626/workspace/upupup/myProject/ep-manage-sys/model/src/main/java/com/schoolwork/epsys/model/acl/Roles.java
 /Users/sevetar1626/workspace/upupup/myProject/ep-manage-sys/model/src/main/java/com/schoolwork/epsys/model/message/MyPrincipal.java
 /Users/sevetar1626/workspace/upupup/myProject/ep-manage-sys/model/src/main/java/com/schoolwork/epsys/model/shared/UserNotification.java
+/Users/sevetar1626/workspace/upupup/myProject/ep-manage-sys/model/src/main/java/com/schoolwork/epsys/model/device/WorkOrderKnowledgeOutbox.java
 /Users/sevetar1626/workspace/upupup/myProject/ep-manage-sys/model/src/main/java/com/schoolwork/epsys/model/device/Devicemodel.java
 /Users/sevetar1626/workspace/upupup/myProject/ep-manage-sys/model/src/main/java/com/schoolwork/epsys/model/device/MaintainRecord.java

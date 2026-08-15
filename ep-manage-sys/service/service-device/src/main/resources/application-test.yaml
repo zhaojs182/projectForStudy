@@ -11,7 +11,7 @@ mybatis-plus:
   type-aliases-package: com.schoolwork.epsys.model
   configuration:
     map-underscore-to-camel-case: true
-    log-impl: org.apache.ibatis.logging.stdout.StdOutImpl
+    log-impl: org.apache.ibatis.logging.nologging.NoLoggingImpl
 spring:
   datasource:
     type: com.zaxxer.hikari.HikariDataSource
@@ -42,7 +42,30 @@ spring:
           max-wait: -1
           max-idle: 5
           min-idle: 0
+  redis:
+    redisson:
+      config: |
+        singleServerConfig:
+          address: "redis://localhost:6379"
+          database: 0
+          connectionMinimumIdleSize: 1
+          connectionPoolSize: 8
+          timeout: 3000
+        threads: 2
+        nettyThreads: 2
+        transportMode: "NIO"
 
   jackson:
     date-format: yyyy-MM-dd HH:mm:ss
     time-zone: GMT+8
+
+dispatch:
+  internal-token: test-internal-token
+  auto:
+    enabled: false
+    claim-window-seconds: 600
+    manual-permission-id: 1001
+
+knowledge:
+  work-order-ingestion:
+    enabled: false

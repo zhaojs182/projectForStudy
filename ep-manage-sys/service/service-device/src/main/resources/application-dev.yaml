@@ -60,3 +60,22 @@ spring:
   jackson:
     date-format: yyyy-MM-dd HH:mm:ss
     time-zone: GMT+8
+
+dispatch:
+  auto:
+    enabled: ${DISPATCH_AUTO_ENABLED:true}
+    claim-window-seconds: ${DISPATCH_CLAIM_WINDOW_SECONDS:600}
+    scan-delay-ms: ${DISPATCH_SCAN_DELAY_MS:30000}
+    scan-batch-size: 100
+    publish-delay-ms: ${DISPATCH_PUBLISH_DELAY_MS:2000}
+    publish-batch-size: 50
+    confirm-timeout-ms: 5000
+    agent-deadline-seconds: 60
+    manual-permission-id: ${DISPATCH_MANUAL_PERMISSION_ID:1001}
+
+knowledge:
+  work-order-ingestion:
+    enabled: ${WORK_ORDER_KNOWLEDGE_ENABLED:true}
+    publish-delay-ms: ${WORK_ORDER_KNOWLEDGE_PUBLISH_DELAY_MS:2000}
+    publish-batch-size: 50
+    confirm-timeout-ms: 5000

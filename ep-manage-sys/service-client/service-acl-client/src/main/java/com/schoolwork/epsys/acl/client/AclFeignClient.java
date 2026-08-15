@@ -18,5 +18,9 @@ public interface AclFeignClient {
     @RequestMapping("/role/addUsertoRole3")
     public Boolean addUsertoRole3(@RequestParam("userId") Integer userId,@RequestParam("roleId") Integer roleId);
 
+    @RequestMapping("/deviceToUser/isDeviceOwnedByUser")
+    Boolean isDeviceOwnedByUser(@RequestParam("userId") Integer userId,
+                                @RequestParam("deviceId") Integer deviceId);
+
 
 }
