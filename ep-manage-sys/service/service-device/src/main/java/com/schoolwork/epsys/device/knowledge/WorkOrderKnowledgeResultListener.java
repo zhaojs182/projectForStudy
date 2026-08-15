@@ -3,6 +3,7 @@ package com.schoolwork.epsys.device.knowledge;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.schoolwork.epsys.device.mapper.WorkOrderKnowledgeOutboxMapper;
+import org.springframework.amqp.core.Message;
 import org.springframework.amqp.rabbit.annotation.RabbitListener;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.stereotype.Component;
@@ -27,10 +28,10 @@ public class WorkOrderKnowledgeResultListener {
     }
 
     @RabbitListener(queues = RESULT_QUEUE)
-    public void consume(byte[] payload) {
+    public void consume(Message message) {
         WorkOrderKnowledgeOutcomeEventV1 outcome;
         try {
-            outcome = objectMapper.readValue(payload, WorkOrderKnowledgeOutcomeEventV1.class);
+            outcome = objectMapper.readValue(message.getBody(), WorkOrderKnowledgeOutcomeEventV1.class);
         } catch (IOException exception) {
             throw new IllegalArgumentException("无效的知识摄取结果合同", exception);
         }
