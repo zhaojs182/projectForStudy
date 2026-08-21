@@ -1,7 +1,7 @@
 # 本地开发环境
 
 项目本地运行需要 MySQL、Redis、RabbitMQ、Nacos 和 Elasticsearch。根目录的
-`compose.yaml` 已按各服务 `application-dev.yaml` 中的地址和账号配置。
+`compose.yaml` 使用环境变量读取本地密码；不要把真实凭据写入 Git、文档或命令历史。
 该 Compose stack 同时是相邻 `myAgent` 项目的本机基础组件来源；不要再为 Agent
 单独启动 Elasticsearch、Redis 或 RabbitMQ。
 
@@ -10,8 +10,18 @@
 如果终端可以直接使用 Docker：
 
 ```bash
+cp .env.example .env
+# 按需修改 .env 中的本地密码；.env 已被 Git 忽略。
 docker compose up -d
 docker compose ps
+```
+
+从终端启动 Java 服务前，可将同一份本地配置导入当前 shell：
+
+```bash
+set -a
+source .env
+set +a
 ```
 
 如果 macOS 中 Docker Desktop 已启动、但终端找不到 `docker`：
@@ -25,10 +35,10 @@ PATH="/Applications/Docker.app/Contents/Resources/bin:$PATH" docker compose ps
 
 | 组件 | 地址 | 账号 |
 | --- | --- | --- |
-| MySQL | `localhost:3308` | `root / 123456` |
-| Redis | `localhost:6379` | 无密码 |
-| RabbitMQ | `localhost:5672` | `admin / 123456` |
-| RabbitMQ 控制台 | <http://localhost:15672> | `admin / 123456` |
+| MySQL | `localhost:3308` | `root` / `MYSQL_ROOT_PASSWORD` |
+| Redis | `localhost:6379` | 本地默认无密码 |
+| RabbitMQ | `localhost:5672` | `RABBITMQ_USER` / `RABBITMQ_PASSWORD` |
+| RabbitMQ 控制台 | <http://localhost:15672> | 使用同一组 RabbitMQ 环境变量 |
 | Nacos 控制台 | <http://localhost:8848/nacos> | 未开启鉴权 |
 | Elasticsearch | <http://localhost:9200> | 未开启鉴权 |
 

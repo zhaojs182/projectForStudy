@@ -1,0 +1,19 @@
+# Build output
+**/target/
+
+# IDE and OS files
+.idea/
+**/.idea/
+*.iml
+.DS_Store
+
+# Local secrets and environment overrides
+.env
+.env.*
+!.env.example
+!**/.env.example
+
+# Logs and local runtime data
+*.log
+*.pid
+docker/*/data/
